@@ -41,37 +41,6 @@ app.use(async (ctx, next) => {
       allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     })
   );
-
-  /*const headers = {
-    "Access-Control-Allow-Origin": "*",
-  }; //сервер может быть вызван из любого источника
-  if (ctx.request.method !== "OPTIONS") {
-    ctx.response.set({
-      ...headers,
-    });
-    try {
-      return await next();
-    } catch (e) {
-      e.headers = {
-        ...e.headers,
-        ...headers,
-      };
-      throw e;
-    }
-  }
-  if (ctx.request.get("Access-Control-Request-Method")) {
-    ctx.response.set({
-      ...headers,
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH",
-    });
-    if (ctx.request.get("Access-Control-Request-Headers")) {
-      ctx.response.set(
-        "Access-Control-Allow-Headers",
-        ctx.request.get("Access-Control-Allow-Request-Headers")
-      );
-    }
-    ctx.response.status = 204; // No content
-  }*/
 });
 
 const fakeData = new dataGenerator();
@@ -80,29 +49,29 @@ postGenerator.start();
 
 router.get("/messages/unread", async (ctx) => {
   fakeData.start();
-  ctx.response.body = JSON.stringify({
+  ctx.response.body = {
     status: "ok",
     messages: fakeData.messagesList,
     timestamp: Date.now(),
-  });
+  };
   console.log(ctx.response.body, "result");
 });
 
 router.get("/posts/latest", async (ctx) => {
-  ctx.response.body = JSON.stringify({
+  ctx.response.body = {
     status: "ok",
     data: postGenerator.postsList,
-  });
+  };
   console.log(ctx.response.body, "result");
 });
 
 router.get("/posts/:id/comments/latest", async (ctx) => {
   const comments = postGenerator.filteredComments(ctx.request.params.id, 3);
 
-  ctx.response.body = JSON.stringify({
+  ctx.response.body = {
     status: "ok",
     data: comments,
-  });
+  };
 });
 
 server.listen(PORT, () =>
