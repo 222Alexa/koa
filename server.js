@@ -54,7 +54,7 @@ router.get("/messages/unread", async (ctx) => {
     messages: fakeData.messagesList,
     timestamp: Date.now(),
   };
-  console.log(ctx.response.body, "result");
+  
 });
 
 router.get("/posts/latest", async (ctx) => {
@@ -62,7 +62,7 @@ router.get("/posts/latest", async (ctx) => {
     status: "ok",
     data: postGenerator.postsList,
   };
-  console.log(ctx.response.body, "result");
+  
 });
 
 router.get("/posts/:id/comments/latest", async (ctx) => {
@@ -72,6 +72,7 @@ router.get("/posts/:id/comments/latest", async (ctx) => {
     status: "ok",
     data: comments,
   };
+
 });
 
 server.listen(PORT, () =>

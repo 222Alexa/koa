@@ -12,7 +12,6 @@ class PWCGenerator {
   start() {
     this.timer = setTimeout(() => {
       this.getPost();
-      this.commentsGenerator();
     }, 200);
   }
 
@@ -31,6 +30,10 @@ class PWCGenerator {
 
     if (this.postsList.length > 9) {
       clearTimeout(this.timer);
+      //комменты сгенерируются
+      // ко всем постам после того, как
+      //заполнен this.postsList
+      this.commentsGenerator();
       return;
     }
     this.start();
@@ -60,26 +63,20 @@ class PWCGenerator {
    */
 
   commentsGenerator() {
-    //не получилось сделать изначально
-    // заданную длину массива(до 3 элементов)
-    //не отловить ошибку, которая позволяет к посту сгенерировать 8 комментов
-    let count = 0;
-    const comments = [];
     this.postsList.forEach((elem) => {
-      if (PWCGenerator.random(0, 3) === 0 || count > 3) {
+      const comments = [];
+      let count = PWCGenerator.random(0, 3);
+      if (count === 0) {
         return;
       }
-      count++;
 
-      setTimeout(() => {
-        const item = this.getComment(elem.id);
+      for (let i = 1; i <= count; i++) {
+        const comment = this.getComment(elem.id);
+        comments.push(comment);
+      }
 
-        comments.push(item);
-       
-      }, 100);
+      this.commentsList.push(comments);
     });
-
-    this.commentsList.push(comments);
   }
 
   /**
@@ -96,10 +93,12 @@ class PWCGenerator {
     const commentsArr = this.commentsList.flat();
 
     const result = commentsArr.filter((elem) => elem.post_id === id);
-    if (result.length > i) result.splice(0, result.length - i);
+
+    if (result.length > i) {
+      return result.slice(0, i);
+    }
     return result;
   }
-
 }
 
 module.exports = PWCGenerator;
