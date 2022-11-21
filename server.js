@@ -7,7 +7,7 @@ const router = new Router();
 
 const dataGenerator = require("./src/PostsGenerator/dataGenerator");
 const PostGenerator = require("./src/PostWithComments/PwCGenerator");
-
+const ReactCrud = require("./src/RA-CRUD/PostsManager");
 const app = new Koa();
 const PORT = process.env.PORT || 8080;
 const server = http.createServer(app.callback());
@@ -54,7 +54,6 @@ router.get("/messages/unread", async (ctx) => {
     messages: fakeData.messagesList,
     timestamp: Date.now(),
   };
-  
 });
 
 router.get("/posts/latest", async (ctx) => {
@@ -62,7 +61,6 @@ router.get("/posts/latest", async (ctx) => {
     status: "ok",
     data: postGenerator.postsList,
   };
-  
 });
 
 router.get("/posts/:id/comments/latest", async (ctx) => {
@@ -72,7 +70,49 @@ router.get("/posts/:id/comments/latest", async (ctx) => {
     status: "ok",
     data: comments,
   };
+});
 
+/**ra-router-crud */
+
+const postsCrud = new ReactCrud();
+postsCrud.start();
+
+router.get("/posts", async (ctx, next) => {
+  ctx.response.body = {
+    status: "ok",
+    data: postsCrud.postsList,
+  };
+});
+
+router.get("/posts/:id", async (ctx, next) => {
+ 
+
+  ctx.response.body = {
+    status: "ok",
+    data: postsCrud.postsList,
+  };
+});
+
+router.delete("/posts/:id", async (ctx, next) => {
+  console.log(ctx.params, "ctx.params.id");
+  const postId = ctx.params.id;
+  postsCrud.deletePost(postsCrud.postsList, postId);
+
+  ctx.response.status = 204;
+});
+
+router.post("/posts", async (ctx, next) => {
+  const data = JSON.parse(ctx.request.body);
+
+  const id = data.id;
+
+  const response = id
+    ? postsCrud.upDatePosts(data, id)
+    : postsCrud.createdPost(data);
+  ctx.response.body = {
+    status: "ok",
+    data: postsCrud.postsList,
+  };
 });
 
 server.listen(PORT, () =>
